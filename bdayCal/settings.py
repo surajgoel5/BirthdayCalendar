@@ -25,7 +25,7 @@ SECRET_KEY = '!=^!ldyy9d__gv653f*5-)57#+e4ry-oc1r+!-n)j55nh$o%@f'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['bday-calendar.herokuapp.com']
 
 
 # Application definition
