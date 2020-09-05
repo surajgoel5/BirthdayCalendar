@@ -1,0 +1,58 @@
+<!doctype html>
+{%load static%} 	
+<html class="no-js">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>All Birthdays</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=550, initial-scale=1">
+
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+ <link href="{% static "styles.css" %}" rel="stylesheet" type="text/css" />
+ <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+	<!-- jQuery -->
+ <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>	
+</head>
+<body>
+
+
+<div class="container">
+ <h1 style='font-weight:400;'>All Birthdays</h1>        
+ 
+ <a class="btn btn-primary" role="button" href="/admin/cal/birthday/add/">Add</a>
+ 
+  <table class="table table-hover" style='font-size:1.2em'>
+    <thead style="font-size: 1.3em;">
+      <tr>
+        <th>Name</th>
+        <th>Date</th>
+	  <th><i class="fa fa-facebook-official" aria-hidden="true"></i></th>
+      </tr>
+    </thead>
+	
+	
+	
+    <tbody>
+	
+	{%for bday in bdays%}
+      <tr style='font-weight:{{bday.fw}}'>
+        <td>{{bday.name}}</td>
+        <td>{{bday.bday}}</td>
+        <td><a href="{{bday.fblink}}">{{bday.fblink}}</a> </td>
+		<td><a class="btn btn-info" role="button" href="/admin/cal/birthday/{{bday.id}}/change/">Edit</a></td>
+		
+      </tr>
+    
+	{%endfor%}
+    </tbody>
+  </table>
+</div>
+
+
+
+</body>
+</html>

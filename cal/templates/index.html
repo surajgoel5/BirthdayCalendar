@@ -1,0 +1,136 @@
+<!doctype html>
+{%load static%} 	
+<html class="no-js">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Birthday Calendar</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=550, initial-scale=1">
+
+    <link rel="stylesheet" href="{% static "dist/jquery.flipster.min.css" %}">
+ <link href="{% static "styles.css" %}" rel="stylesheet" type="text/css" />
+	<!-- jQuery -->
+	<script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    
+	<script src="{% static "dist/jquery.flipster.min.js" %}"></script>
+	
+</head>
+<body>
+
+
+    <div id = 'carousel' style="overflow-y: hidden; margin-top:3em;" >
+        <ul class="flip-items ">
+		
+		      <li>
+				<div class="calcard ">
+						
+					<h1 class='newmonth'>{{prev_date.month}}
+					<br>
+					<a href="{% url "flipcal" dd=prev_date.date.day mm=prev_date.date.month yy=prev_date.date.year %} ">{{prev_date.year}}</a>
+					</h1>
+				</div>
+            </li>
+		
+			{%for date in dates%}
+		
+            <li>
+				<div class="calcard {{date.bday.class}}">
+					<h1 class='weekday'>{{date.weekday}} </h1>
+					
+					{%if date.bday.class%}
+					
+						{% if date.bday.high_priority%}
+						
+							<img src="{%static "img/cake.svg"%}">
+								{%for bd in date.bday.bdays%}
+									<h2 class ='bday_entry'>  <span class='name'>{{bd.name}}</span> <span class='age'>(Turn{{date.tense}}: {{bd.age}})</span> </h2>
+							
+								{%endfor%}
+						
+						
+						<h1 class='date_panel'> <span class='date'>{{date.day}}</span> <span class='month_year'>{{date.month}}, {{year}}</span></h1>
+				
+						{%else%}
+						<h1 class='date_panel'> <span class='date'>{{date.day}}</span> </h1>
+				
+							<img src="{%static "img/cake_small.svg"%}">
+								{%for bd in date.bday.bdays%}
+									<h2 class ='bday_entry'>  <span class='name'>{{bd.name}}</span> <span class='age'>(Turn{{date.tense}}: {{bd.age}})</span> </h2>
+								{%endfor%}
+								
+						<h1 class='date_panel'><span class='month_year'>{{date.month}}, {{year}}</span></h1>
+						
+						{%endif%}
+					{%else%}	
+					<h1 class='date_panel'> <span class='date'>{{date.day}}</span> <br><span class='month_year'>{{date.month}}, {{year}}</span></h1>
+				
+					{%endif%}
+					
+					
+				</div>
+            </li>
+         
+			{%endfor%}
+            
+			<li>
+				<div class="calcard ">
+						
+					<h1 class='newmonth'>{{next_date.month}}
+					<br>
+					<a href="{% url "flipcal" dd=next_date.date.day mm=next_date.date.month yy=next_date.date.year %} ">{{next_date.year}}</a>
+					</h1>
+				</div>
+            </li>
+			
+        </ul>
+    </div>
+
+<script>
+    var carousel = $("#carousel").flipster({
+        style: 'carousel',
+        spacing: -0.5,
+        nav: false,
+        buttons:   true,
+		start: {{day}} ,
+    });
+</script>
+
+
+<div class="card left" >
+  
+  <div class="container">
+  <h4 class="card_title">Upcoming Birthdays</h4> 
+   {%for bday in upcoming_bdays%}
+   
+   <div class="upcoming_bd_entry"> 
+   <img src="{%static "img/cake_small.svg"%}">
+   <span class= "upcoming_bd_entry_name">{{bday.name}}</span> - <span class= "upcoming_bd_entry_date">{{bday.bday}} </span>
+	  
+	  </div>
+   
+   {%endfor%}
+   
+   
+  </div>
+</div>
+
+
+<div class="card right" >
+
+  <div class="container">
+  <a class="button button1" href="{% url "allbdays" %}">View All</a>
+  <br>
+  <a class="button button2" href="/admin/cal/birthday/add/">Add New</a>
+ 
+  </div>
+</div>
+
+
+
+
+
+
+
+</body>
+</html>
