@@ -1,0 +1,1 @@
+web: gunicorn bdayCal.wsgi --log-file -
