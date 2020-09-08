@@ -251,6 +251,7 @@ def send_email(subject, message,to=EMAIL_TO,userid=EMAIL_ID,passw=EMAIL_PASSWORD
     msg['Subject'] = subject
     msg['From'] = userid
     msg['To'] = to
+    msg.add_header('X-Entity-Ref-ID', 'null')
     msg.add_header('Content-Type','text/html')
     msg.set_payload(message)
     try:
