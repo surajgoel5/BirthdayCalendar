@@ -9,45 +9,7 @@ import numpy as np
 
 NO_OF_DAYS=12
 UPCOMING_BDAY_DAYS=30
-def index2(request):
 
-    today=timezone.localtime(timezone.now()).date()
-    dates=[]
-    for i in range(NO_OF_DAYS):
-        date=today + datetime.timedelta(days=i-int(NO_OF_DAYS/2))
-
-        try:
-
-            bday=Birthday.objects.filter(bdate=day_to_date(date))[0]
-            bday_exists = True
-        except:
-            bday=None
-            bday_exists = False
-        dates.append({"year":date.year,"month":date.strftime("%B"),"date":date.day,"day":date.strftime("%A"),"today":not bool(i-int(NO_OF_DAYS/2)),
-                      "bday":bday,"bday_exists":bday_exists
-                      })#date
-    context={"dates":dates}
-
-
-    todate=datetime.date(datetime.MINYEAR,today.month,today.day)
-
-    all_birthdays = Birthday.objects.order_by('bdate')
-    
-    mindays=367
-    next_bday=all_birthdays[0]
-    upcoming_bdays=[]
-    for bday in all_birthdays:
-        datediff=date_diff(todate, bday.bdate)
-        if datediff<mindays and datediff>0:   ##TODO: Birthday clash same day
-            next_bday=bday
-            mindays= datediff
-        if datediff<UPCOMING_BDAY_DAYS and datediff>0:
-            upcoming_bdays.append(bday)
-
-
-    context["upcoming_bdays"]=upcoming_bdays
-    context["next_bday"]=next_bday
-    return render(request,"index.html",context)
 
 def index(request):
     today = timezone.localtime(timezone.now()).date()

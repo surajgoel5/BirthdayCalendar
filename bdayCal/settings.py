@@ -32,6 +32,7 @@ ALLOWED_HOSTS = ['bday-calendar.herokuapp.com']
 
 INSTALLED_APPS = [
     'cal.apps.CalConfig',
+    'mailer.apps.MailerConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
