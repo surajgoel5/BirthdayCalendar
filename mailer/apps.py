@@ -1,11 +1,13 @@
 from django.apps import AppConfig
 import email.message
+import email.utils
 import smtplib
 import time
 from django.utils import timezone
 import datetime
 from operator import itemgetter
 from django.template.loader import get_template
+import random
 import os
 
 EMAIL_ID=os.environ.get('EMAIL_ID');
@@ -18,7 +20,7 @@ P2_DAYS=7#7
 P3_DAYS=1#1
 
 #MAil Times in 24hr hrs
-GEN_REM_TIME=12
+GEN_REM_TIME=18
 LM_REM_TIME=23
 WISH_TIME=6
 
@@ -29,7 +31,7 @@ def mailerFunc():
     from .models import MailedList
     global color
 
-    print("Mailing Normal")
+    makeLog("Mailing Normal")
     while True:
 
         color = COLORS[len(MailedList.objects.order_by('type')) % 4]
@@ -38,36 +40,40 @@ def mailerFunc():
         currentHour = datetime.datetime.now().hour
         if currentHour==GEN_REM_TIME:
             if len(MailedList.objects.filter(type=MailedList.MAIL_TYPE.gen_reminder,date__date=today))!=0:
-                print("General Reminder for Today has already been sent")
+                makeLog("General Reminder for Today has already been sent")
+                time.sleep(300)
             else:
-                print("Sending todays's gen reminder")
+                makeLog("Sending todays's gen reminder")
                 sendGenReminder(Birthday)
                 MailedList(type=MailedList.MAIL_TYPE.gen_reminder).save()
 
         elif currentHour==LM_REM_TIME:
             if len(MailedList.objects.filter(type=MailedList.MAIL_TYPE.lm_reminder, date__date=today)) != 0:
-                print("LM Reminder for Today has already been sent")
+                makeLog("LM Reminder for Today has already been sent")
+                time.sleep(300)
             else:
-                print("Sending todays's LM reminder")
+                makeLog("Sending todays's LM reminder")
                 sendLMReminder(Birthday)
                 MailedList(type=MailedList.MAIL_TYPE.lm_reminder).save()
 
         elif currentHour==WISH_TIME:
             if len(MailedList.objects.filter(type=MailedList.MAIL_TYPE.wishday, date__date=today)) != 0:
-                print("Wishes already sent")
+                makeLog("Wishes already sent")
+                time.sleep(300)
             else:
-                print("Sending todays's wishes")
+                makeLog("Sending todays's wishes")
                 sendWishes(Birthday)
                 MailedList(type=MailedList.MAIL_TYPE.wishday).save()
 
         time.sleep(10)
-
+def makeLog(text):
+    from .models import Logs
+    Logs(log=text).save()
 
 def sendGenReminder(Birthday):
     reminders = getBirthdayReminders(Birthday)
     if len(reminders)!=0:
-        for rem in reminders:
-            print("Sending General Reminders for:", rem[0].name,", Bday in ",rem[1]," days")
+        makeLog("Sending Gen Reminders for:" + str(reminders))
         subject,rendered=prepareReminderEmail(reminders)
         send_email(subject,rendered)
 
@@ -78,17 +84,17 @@ def sendLMReminder(Birthday):
         for rem in reminders:
 
             if rem[1]==1:
-                print("Sending LM Reminders for:", rem[0].name)
-                rems.append(rem)
 
+                rems.append(rem)
+        makeLog("Sending LM Reminders for:"+str(rems))
         subject,rendered=prepareReminderEmailLM(rems)
         send_email(subject, rendered)
 
 def sendWishes(Birthday):
     bdays=getTodayBirthdays(Birthday)
     if len(bdays)!=0:
-        for bday in bdays:
-            print("Wish ",bday.name)
+
+        makeLog("Wish "+str(bdays))
         subject, rendered = prepareWishdayEmail(bdays)
         send_email(subject, rendered)
 
@@ -164,7 +170,7 @@ def prepareReminderEmail(reminders):
         p1text += "<br><br>Don't forget to wish them!"
 
     global color
-    print(color)
+
     context={ 'title': title,'p1text':p1text,'upcoming_bdays':getupcoming(),'color':color }
     template = get_template('email_reminder.html')
     rendered=template.render(context)
@@ -188,7 +194,6 @@ def prepareReminderEmailLM(reminders):
     if no_of_reminders-1:
         singular="s"
     for i in range(no_of_reminders):
-        print(i)
         if i==no_of_reminders-1:
             nex = " "
         elif i==no_of_reminders-2:
@@ -205,7 +210,7 @@ def prepareReminderEmailLM(reminders):
     rendered=template.render(context)
     #f = open("email_temp_gen_text.htm", "w")
     #f.write(rendered)
-    f#.close()
+    #f.close()
     #send_email(subject, message=rendered)
     return subject,rendered
 
@@ -224,7 +229,6 @@ def prepareWishdayEmail(bdays):
     if no_of_bdays-1:
         singular="s"
     for i in range(no_of_bdays):
-        print(i)
         if i==no_of_bdays-1:
             nex = " "
         elif i==no_of_bdays-2:
@@ -247,12 +251,16 @@ def prepareWishdayEmail(bdays):
 
 
 def send_email(subject, message,to=EMAIL_TO,userid=EMAIL_ID,passw=EMAIL_PASSWORD):
+    randomstr=str(int(random.random()*1000000))
+
     msg = email.message.Message()
     msg['Subject'] = subject
     msg['From'] = userid
     msg['To'] = to
-    msg.add_header('X-Entity-Ref-ID', 'null')
+    #msg.add_header("Message-ID", myid)
     msg.add_header('Content-Type','text/html')
+
+    msg.add_header('X-Entity-Ref-ID','null')
     msg.set_payload(message)
     try:
         server = smtplib.SMTP_SSL('smtp.gmail.com', 465)
@@ -260,8 +268,11 @@ def send_email(subject, message,to=EMAIL_TO,userid=EMAIL_ID,passw=EMAIL_PASSWORD
         server.login(userid,passw)
         server.sendmail(msg['From'], [msg['To']], msg.as_string())
         server.close()
+        makeLog("Mail Sent Successful")
         return 0
     except:
+
+        makeLog("Mail not sent, error")
         return 1
 
 

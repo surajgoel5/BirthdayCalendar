@@ -12,3 +12,10 @@ class MailedList(models.Model):
    date= models.DateTimeField(default=timezone.now)
    def __str__(self):
        return str(self.type)+"_"+str(self.date.date())
+
+class Logs(models.Model):
+    date = models.DateTimeField(default=timezone.now)
+    log=models.CharField(max_length=500)
+
+    def __str__(self):
+        return '['+str(self.date.date())+'] '+self.log

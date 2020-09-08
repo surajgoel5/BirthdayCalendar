@@ -1,7 +1,8 @@
 from django.contrib import admin
 
-from .models import MailedList
+from .models import *
 
 admin.site.register(MailedList)
+admin.site.register(Logs)
 
 # Register your models here.
