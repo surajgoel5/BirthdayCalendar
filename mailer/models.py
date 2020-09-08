@@ -19,3 +19,13 @@ class Logs(models.Model):
 
     def __str__(self):
         return '['+str(self.date.date())+'] '+self.log
+
+class Lock(models.Model):
+    LOCK_STATE= Choices(
+        (1, 'aquired', 'AQUIRED'),
+        (0, 'released', 'RELEASED')
+    )
+    lock = models.IntegerField(default=LOCK_STATE.aquired, choices=LOCK_STATE)
+
+    def __str__(self):
+        return "LOCK:"+str(self.lock)

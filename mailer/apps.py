@@ -8,11 +8,11 @@ import datetime
 from operator import itemgetter
 from django.template.loader import get_template
 import random
-import os
 
 EMAIL_ID=os.environ.get('EMAIL_ID');
 EMAIL_PASSWORD=os.environ.get('EMAIL_PASS');
 EMAIL_TO=os.environ.get('EMAIL_TO');
+
 
 #reminder days
 P1_DAYS=14 #14
@@ -20,13 +20,31 @@ P2_DAYS=7#7
 P3_DAYS=1#1
 
 #MAil Times in 24hr hrs
-GEN_REM_TIME=19
+GEN_REM_TIME=12
 LM_REM_TIME=23
-WISH_TIME=6
+WISH_TIME=18
 
 COLORS=["#2d55e7","#c24ed1","#32e191","#28c3ff"]
 color=""
 def mailerFunc():
+    from .models import Lock
+    lock = Lock.objects.filter(id=1)[0]
+    lock.lock=1
+    lock.save()
+
+
+    rndtime=random.random()*30
+    makeLog("Sleeping for: "+str(rndtime))
+    time.sleep(rndtime)
+    lock=Lock.objects.filter(id=1)[0]
+    if lock.lock:
+        lock.lock =0
+        lock.save()
+        makeLog("Lock Aquired")
+    else:
+        makeLog("Lock couldn't be aquired, terminating this thread")
+        return 0
+
     from cal.models import Birthday
     from .models import MailedList
     global color
