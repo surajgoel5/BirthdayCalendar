@@ -6,7 +6,7 @@ from django.utils import timezone
 import datetime
 from operator import itemgetter
 from django.template.loader import get_template
-
+import os
 
 EMAIL_ID=os.environ.get('EMAIL_ID');
 EMAIL_PASSWORD=os.environ.get('EMAIL_PASS');
