@@ -21,9 +21,9 @@ P2_DAYS=7#7
 P3_DAYS=1#1
 
 #MAil Times in 24hr hrs
-GEN_REM_TIME=12
+GEN_REM_TIME=7
 LM_REM_TIME=23
-WISH_TIME=18
+WISH_TIME=6
 
 COLORS=["#2d55e7","#c24ed1","#32e191","#28c3ff"]
 color=""
