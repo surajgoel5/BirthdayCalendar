@@ -35,7 +35,7 @@ def mailerFunc():
 
 
     rndtime=random.random()*30
-    makeLog("Sleeping for: "+str(rndtime))
+    makeLog("Sleeping for:"+str(rndtime))
     time.sleep(rndtime)
     lock=Lock.objects.filter(id=1)[0]
     if lock.lock:
