@@ -34,7 +34,7 @@ def mailerFunc():
     lock.save()
 
 
-    rndtime=random.random()*30
+    rndtime=random.random()*30+2
     makeLog("Sleeping for:"+str(rndtime))
     time.sleep(rndtime)
     lock=Lock.objects.filter(id=1)[0]
@@ -44,7 +44,8 @@ def mailerFunc():
         makeLog("Lock Aquired")
     else:
         makeLog("Lock couldn't be aquired, terminating this thread")
-        return 0
+
+        #return 0
 
     from cal.models import Birthday
     from .models import MailedList
