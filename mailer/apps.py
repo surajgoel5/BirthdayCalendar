@@ -53,37 +53,39 @@ def mailerFunc():
 
     makeLog("Mailing Normal")
     while True:
+        try:
+            color = COLORS[len(MailedList.objects.order_by('type')) % 4]
 
-        color = COLORS[len(MailedList.objects.order_by('type')) % 4]
+            today=timezone.localtime(timezone.now()).date()
+            currentHour = datetime.datetime.now().hour
+            if currentHour==GEN_REM_TIME:
+                if len(MailedList.objects.filter(type=MailedList.MAIL_TYPE.gen_reminder,date__date=today))!=0:
+                    makeLog("General Reminder for Today has already been sent")
+                    time.sleep(300)
+                else:
+                    makeLog("Sending todays's gen reminder")
+                    sendGenReminder(Birthday)
+                    MailedList(type=MailedList.MAIL_TYPE.gen_reminder).save()
 
-        today=timezone.localtime(timezone.now()).date()
-        currentHour = datetime.datetime.now().hour
-        if currentHour==GEN_REM_TIME:
-            if len(MailedList.objects.filter(type=MailedList.MAIL_TYPE.gen_reminder,date__date=today))!=0:
-                makeLog("General Reminder for Today has already been sent")
-                time.sleep(300)
-            else:
-                makeLog("Sending todays's gen reminder")
-                sendGenReminder(Birthday)
-                MailedList(type=MailedList.MAIL_TYPE.gen_reminder).save()
+            elif currentHour==LM_REM_TIME:
+                if len(MailedList.objects.filter(type=MailedList.MAIL_TYPE.lm_reminder, date__date=today)) != 0:
+                    makeLog("LM Reminder for Today has already been sent")
+                    time.sleep(300)
+                else:
+                    makeLog("Sending todays's LM reminder")
+                    sendLMReminder(Birthday)
+                    MailedList(type=MailedList.MAIL_TYPE.lm_reminder).save()
 
-        elif currentHour==LM_REM_TIME:
-            if len(MailedList.objects.filter(type=MailedList.MAIL_TYPE.lm_reminder, date__date=today)) != 0:
-                makeLog("LM Reminder for Today has already been sent")
-                time.sleep(300)
-            else:
-                makeLog("Sending todays's LM reminder")
-                sendLMReminder(Birthday)
-                MailedList(type=MailedList.MAIL_TYPE.lm_reminder).save()
-
-        elif currentHour==WISH_TIME:
-            if len(MailedList.objects.filter(type=MailedList.MAIL_TYPE.wishday, date__date=today)) != 0:
-                makeLog("Wishes already sent")
-                time.sleep(300)
-            else:
-                makeLog("Sending todays's wishes")
-                sendWishes(Birthday)
-                MailedList(type=MailedList.MAIL_TYPE.wishday).save()
+            elif currentHour==WISH_TIME:
+                if len(MailedList.objects.filter(type=MailedList.MAIL_TYPE.wishday, date__date=today)) != 0:
+                    makeLog("Wishes already sent")
+                    time.sleep(300)
+                else:
+                    makeLog("Sending todays's wishes")
+                    sendWishes(Birthday)
+                    MailedList(type=MailedList.MAIL_TYPE.wishday).save()
+        except Exception as e:
+            makeLog("Error:"+str(e))
 
         time.sleep(10)
 def makeLog(text):
