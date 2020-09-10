@@ -45,7 +45,7 @@ def mailerFunc():
     else:
         makeLog("Lock couldn't be aquired, terminating this thread")
         return 0
-    return 0
+    #return 0
     from cal.models import Birthday
     from .models import MailedList
     global color
