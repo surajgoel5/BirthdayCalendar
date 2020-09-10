@@ -44,8 +44,7 @@ def mailerFunc():
         makeLog("Lock Aquired")
     else:
         makeLog("Lock couldn't be aquired, terminating this thread")
-
-        #return 0
+        return 0
 
     from cal.models import Birthday
     from .models import MailedList
@@ -57,9 +56,10 @@ def mailerFunc():
             color = COLORS[len(MailedList.objects.order_by('type')) % 4]
 
             today=timezone.localtime(timezone.now()).date()
+            todate = day_to_date(today)
             currentHour = datetime.datetime.now().hour
             if currentHour==GEN_REM_TIME:
-                if len(MailedList.objects.filter(type=MailedList.MAIL_TYPE.gen_reminder,date__date=today))!=0:
+                if len(MailedList.objects.filter(type=MailedList.MAIL_TYPE.gen_reminder,date__date=todate))!=0:
                     makeLog("General Reminder for Today has already been sent")
                     time.sleep(300)
                 else:
@@ -68,7 +68,7 @@ def mailerFunc():
                     MailedList(type=MailedList.MAIL_TYPE.gen_reminder).save()
 
             elif currentHour==LM_REM_TIME:
-                if len(MailedList.objects.filter(type=MailedList.MAIL_TYPE.lm_reminder, date__date=today)) != 0:
+                if len(MailedList.objects.filter(type=MailedList.MAIL_TYPE.lm_reminder, date__date=todate)) != 0:
                     makeLog("LM Reminder for Today has already been sent")
                     time.sleep(300)
                 else:
@@ -77,7 +77,7 @@ def mailerFunc():
                     MailedList(type=MailedList.MAIL_TYPE.lm_reminder).save()
 
             elif currentHour==WISH_TIME:
-                if len(MailedList.objects.filter(type=MailedList.MAIL_TYPE.wishday, date__date=today)) != 0:
+                if len(MailedList.objects.filter(type=MailedList.MAIL_TYPE.wishday, date__date=todate)) != 0:
                     makeLog("Wishes already sent")
                     time.sleep(300)
                 else:
