@@ -88,6 +88,34 @@ def allbdays(request):
 
     return render(request, "allbdays.html", context)
 
+def exportallbdays(request):
+    all_birthdays = Birthday.objects.order_by('bdate')
+    with open("savedBdays.txt", 'w') as file:
+        bdays = []
+        for bday in all_birthdays:
+            file.write(str(bday.priority)+','+bday.name+','+str(bday.bday)+','+str(bday.bdate)+','+bday.fblink+'\n')
+    return(HttpResponse("Saved"))
+
+def importallbdays(request):
+    file= open("savedBdays.txt", 'r')
+    all_birthdays = Birthday.objects.order_by('bdate')
+    for line in file:
+
+        pri,name,bday,bdate,fblink=line.split(",")
+        fblink = fblink[:-1]
+        d_bday=datetime.datetime.strptime(bday, '%Y-%m-%d').date()
+        d_bdate=datetime.datetime.strptime(bdate, '%Y-%m-%d').date()
+        newbday=Birthday(priority=int(pri),name=name,bday=d_bday,bdate=d_bdate,fblink=fblink)
+
+        if Birthday.objects.filter(name=name,bday=bday, priority=int(pri),bdate=d_bdate,fblink=fblink):
+            print("exists",name)
+        else:
+            newbday.save()
+            print("Saved")
+
+
+    return(HttpResponse("Updated"))
+
 def getupcoming():
 
     today = timezone.localtime(timezone.now()).date()
