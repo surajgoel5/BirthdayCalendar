@@ -20,7 +20,7 @@ P1_DAYS=14 #14
 P2_DAYS=7#7
 P3_DAYS=1#1
 
-#MAil Times in 24hr hrs
+#MAil Times in 24 hr hrs
 GEN_REM_TIME=11
 LM_REM_TIME=23
 WISH_TIME=6
