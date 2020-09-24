@@ -15,7 +15,7 @@ EMAIL_PASSWORD=os.environ.get('EMAIL_PASS');
 EMAIL_TO=os.environ.get('EMAIL_TO');
 
 
-#reminder days
+#reminder  days
 P1_DAYS=14 #14
 P2_DAYS=7#7
 P3_DAYS=1#1
