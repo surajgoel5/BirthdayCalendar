@@ -29,6 +29,7 @@ COLORS=["#2d55e7","#c24ed1","#32e191","#28c3ff"]
 color=""
 def mailerFunc():
     from .models import Lock
+    Lock().save()
     lock = Lock.objects.filter(id=1)[0]
     lock.lock=1
     lock.save()
