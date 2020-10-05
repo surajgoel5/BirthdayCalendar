@@ -9,6 +9,10 @@ path('start/', views.start)
 
 from mailer.tasks import *
 import datetime
-from background_task.models import Task
+from background_task.models import *
+from django.conf import settings
 
-mailerFunc(schedule=1,repeat=60*1, repeat_until=None)
+Task.objects.all().delete()
+CompletedTask.objects.all().delete()
+
+mailerFunc(schedule=1,repeat=60*20, repeat_until=None)

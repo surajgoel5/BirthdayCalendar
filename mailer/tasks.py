@@ -9,7 +9,6 @@ from operator import itemgetter
 from django.template.loader import get_template
 import random
 import os
-
 from background_task import background
 from django.conf import settings
 
@@ -25,7 +24,7 @@ P2_DAYS=7#7
 P3_DAYS=1#1
 
 #MAil Times in 24 hr hrs
-GEN_REM_TIME=12
+GEN_REM_TIME=11
 LM_REM_TIME=23
 WISH_TIME=6
 
@@ -34,10 +33,8 @@ color=""
 
 
 
-@background(schedule=60*20)
+@background(schedule=1)
 def mailerFunc():
-
-    makeLog(str(timezone.now()))
     from cal.models import Birthday
     from .models import MailedList
     global color
@@ -46,7 +43,7 @@ def mailerFunc():
     try:
         color = COLORS[len(MailedList.objects.order_by('type')) % 4]
 
-        today=timezone.localtime(timezone.now()).date()
+        today=timezone.localtime(timezone.localtime()).date()
         todate = day_to_date(today)
         currentHour = datetime.datetime.now().hour
         if currentHour==GEN_REM_TIME:
@@ -54,7 +51,6 @@ def mailerFunc():
                 makeLog("General Reminder for Today has already been sent")
                 #time.sleep(60*20)
             else:
-                makeLog("Sending todays's gen reminder")
                 sendGenReminder(Birthday)
                 MailedList(type=MailedList.MAIL_TYPE.gen_reminder).save()
 
@@ -63,7 +59,7 @@ def mailerFunc():
                 makeLog("LM Reminder for Today has already been sent")
                 #time.sleep(60*20)
             else:
-                makeLog("Sending todays's LM reminder")
+                #makeLog("Sending todays's LM reminder")
                 sendLMReminder(Birthday)
                 MailedList(type=MailedList.MAIL_TYPE.lm_reminder).save()
 
@@ -73,7 +69,7 @@ def mailerFunc():
                 makeLog("Wishes already sent")
                 #time.sleep(60*20)
             else:
-                makeLog("Sending todays's wishes")
+                #makeLog("Sending todays's wishes")
                 sendWishes(Birthday)
                 MailedList(type=MailedList.MAIL_TYPE.wishday).save()
     except Exception as e:
@@ -86,15 +82,19 @@ def makeLog(text):
 
 def sendGenReminder(Birthday):
     reminders = getBirthdayReminders(Birthday)
+    #print(reminders)
     if len(reminders)!=0:
         makeLog("Sending Gen Reminders for:" + str(reminders))
         subject,rendered=prepareReminderEmail(reminders)
         send_email(subject,rendered)
+        return(0)
+    else:
+        return(1)
 
 def sendLMReminder(Birthday):
 
     reminders = getBirthdayReminders(Birthday)
-    print(reminders)
+    #print(reminders)
     if len(reminders) != 0:
         rems = []
         for rem in reminders:
@@ -105,6 +105,9 @@ def sendLMReminder(Birthday):
         makeLog("Sending LM Reminders for:"+str(rems))
         subject,rendered=prepareReminderEmailLM(rems)
         send_email(subject, rendered)
+        return (0)
+    else:
+        return (1)
 
 def sendWishes(Birthday):
     bdays=getTodayBirthdays(Birthday)
@@ -113,14 +116,18 @@ def sendWishes(Birthday):
         makeLog("Wish "+str(bdays))
         subject, rendered = prepareWishdayEmail(bdays)
         send_email(subject, rendered)
+        return (0)
+    else:
+        return (1)
 
 def getBirthdayReminders(Birthday): #mail to be sent at 12noon #call again nad filter remdays to 1 for last minuite wish
 
-    todate = day_to_date(timezone.localtime(timezone.now()).date())
+    todate = day_to_date(timezone.localtime(timezone.localtime()).date())
     all_birthdays = Birthday.objects.order_by('bdate')
     reminders=[]
     for bday in all_birthdays:
         remaining_days=(date_diff(todate,bday.bdate)).days
+        print(remaining_days)
         ##Reminders
         if remaining_days==P1_DAYS and bday.priority==1:
             reminders.append([bday,remaining_days,bday.priority])
@@ -131,7 +138,7 @@ def getBirthdayReminders(Birthday): #mail to be sent at 12noon #call again nad f
     return reminders
 
 def getTodayBirthdays(Birthday):
-    todate = day_to_date(timezone.localtime(timezone.now()).date())
+    todate = day_to_date(timezone.localtime(timezone.localtime()).date())
     bdays = Birthday.objects.filter(bdate=todate)
     return bdays
 

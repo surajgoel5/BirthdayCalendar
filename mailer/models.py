@@ -9,12 +9,12 @@ class MailedList(models.Model):
         (3, 'wishday', 'WISHDAY'),  #the day you wish
     )
    type = models.IntegerField(default=MAIL_TYPE.gen_reminder, choices=MAIL_TYPE)
-   date= models.DateTimeField(default=timezone.now)
+   date= models.DateTimeField(default=timezone.localtime)
    def __str__(self):
        return str(self.type)+"_"+str(self.date.date())
 
 class Logs(models.Model):
-    date = models.DateTimeField(default=timezone.now)
+    date = models.DateTimeField(default=timezone.localtime)
     log=models.CharField(max_length=500)
 
     def __str__(self):
