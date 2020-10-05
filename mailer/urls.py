@@ -8,5 +8,5 @@ path('start/', views.start)
 
 
 from mailer.tasks import *
-test()
+test() 
 #mailerFunc()
