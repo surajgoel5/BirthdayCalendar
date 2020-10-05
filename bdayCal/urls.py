@@ -18,6 +18,7 @@ from django.urls import path,include
 
 urlpatterns = [
     path('', include('cal.urls')),
+    path('mailer/', include('mailer.urls')),
     path('admin/', admin.site.urls),
 
 ]

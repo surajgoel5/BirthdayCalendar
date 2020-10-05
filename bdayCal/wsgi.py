@@ -19,5 +19,5 @@ application = get_wsgi_application()
 
 
 
-from mailer.apps import mailerFunc #.func as func
-threading.Thread(target=mailerFunc).start()
+#from mailer.apps import mailerFunc #.func as func
+#threading.Thread(target=mailerFunc).start()
